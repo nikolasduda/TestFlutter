@@ -1,29 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:test_app/viewmodels/viewmodel_question_structure_list.dart';
-import 'package:test_app/views/test_page.dart';
 import '../Constants.dart';
 
-class MainPage extends StatefulWidget {
-  @override
-  _MainPageState createState() => _MainPageState();
-}
-
-class _MainPageState extends State<MainPage> {
-  ViewModelQuestionStructureList viewModelQuestionStructureList =
-      ViewModelQuestionStructureList();
-
-  void redirectToTests(context) async {
-    await viewModelQuestionStructureList.setQuestions();
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) {
-          return TestPage(vmQuestionList: viewModelQuestionStructureList);
-        },
-      ),
-    );
-  }
+class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +20,7 @@ class _MainPageState extends State<MainPage> {
                 ),
                 Flexible(
                   child: Text(
-                    Constants.mainNote,
+                    ModalRoute.of(context).settings.arguments,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 40,
@@ -57,7 +36,8 @@ class _MainPageState extends State<MainPage> {
               children: [
                 ElevatedButton(
                     onPressed: () {
-                      redirectToTests(context);
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/', (route) => false);
                     },
                     style: ElevatedButton.styleFrom(
                         primary: Colors.indigo,
@@ -69,7 +49,7 @@ class _MainPageState extends State<MainPage> {
                           fontFamily: 'Roboto',
                         )),
                     child: Text(
-                      Constants.buttonText,
+                      Constants.ok,
                     )),
                 Padding(padding: EdgeInsets.only(bottom: 150)),
               ],

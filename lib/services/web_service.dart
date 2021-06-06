@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
-import 'package:test_app/models/model_test_structure.dart';
+import 'package:test_app/models/model_question_structure.dart';
 
 class WebService {
   var dio = Dio();
 
-  Future<List<TestStructure>> getTests() async {
+  Future<List<QuestionStructure>> getQuestions() async {
     String url = 'https://opentdb.com/api.php?amount=10&type=multiple';
 
     final response = await dio.get(url);
@@ -12,7 +12,7 @@ class WebService {
     if (response.statusCode == 200) {
       final result = response.data;
       Iterable list = result['results'];
-      return list.map((test) => TestStructure.fromJson(test)).toList();
+      return list.map((test) => QuestionStructure.fromJson(test)).toList();
     } else {
       throw Exception("Failed to get tests");
     }
