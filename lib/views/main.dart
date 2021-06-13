@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:test_app/viewmodels/viewmodel_question_structure_list.dart';
+import 'package:test_app/viewmodels/viewmodel_question_list.dart';
 import 'package:test_app/views/test_page.dart';
-import '../Constants.dart';
+import '../constants.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -10,16 +10,15 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  ViewModelQuestionStructureList viewModelQuestionStructureList =
-      ViewModelQuestionStructureList();
+  QuestionListViewModel questionListViewModel = QuestionListViewModel();
 
-  void redirectToTests(context) async {
-    await viewModelQuestionStructureList.setQuestions();
+  void redirectToQuestions() async {
+    await questionListViewModel.startTest();
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) {
-          return TestPage(vmQuestionList: viewModelQuestionStructureList);
+          return TestPage(vmQuestionList: questionListViewModel);
         },
       ),
     );
@@ -28,51 +27,46 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("TestApp")),
+      appBar: AppBar(
+        title: Text("TestApp"),
+      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Container(
-                  margin: EdgeInsets.only(top: 200),
-                ),
-                Flexible(
-                  child: Text(
-                    Constants.mainNote,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 40,
-                      fontFamily: 'Roboto',
-                    ),
-                    textAlign: TextAlign.center,
+            FractionallySizedBox(
+              child: Container(
+                margin: EdgeInsets.only(top: 30),
+                child: Text(
+                  Constants.mainNote,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 40,
+                    fontFamily: 'Roboto',
                   ),
-                )
-              ],
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                    onPressed: () {
-                      redirectToTests(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                        primary: Colors.indigo,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-                        textStyle: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Roboto',
-                        )),
-                    child: Text(
-                      Constants.buttonText,
-                    )),
-                Padding(padding: EdgeInsets.only(bottom: 150)),
-              ],
+            Container(
+              margin: EdgeInsets.only(bottom: 40),
+              child: ElevatedButton(
+                onPressed: () {
+                  redirectToQuestions();
+                },
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.indigo,
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                  textStyle: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'Roboto',
+                  ),
+                ),
+                child: Text(
+                  Constants.buttonText,
+                ),
+              ),
             ),
           ],
         ),

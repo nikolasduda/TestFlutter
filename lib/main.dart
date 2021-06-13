@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:test_app/viewmodels/viewmodel_question_structure_list.dart';
+import 'package:test_app/viewmodels/viewmodel_question_list.dart';
 import 'package:test_app/views/main.dart';
 import 'package:test_app/views/result_page.dart';
 
