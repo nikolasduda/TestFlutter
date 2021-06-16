@@ -16,7 +16,6 @@ class TestPage extends StatefulWidget {
 
 class _TestPageState extends State<TestPage> {
   List<int> radioIndexes = Iterable<int>.generate(4).toList();
-  Question questionModel;
 
   Future<bool> _onWillPop() async {
     if (widget.vmQuestionList.currentQuestionIndex > 0) {
@@ -33,7 +32,7 @@ class _TestPageState extends State<TestPage> {
 
   @override
   Widget build(BuildContext context) {
-    questionModel = widget
+    final questionModel = widget
         .vmQuestionList.questions[widget.vmQuestionList.currentQuestionIndex];
     return WillPopScope(
       child: Scaffold(
