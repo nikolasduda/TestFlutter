@@ -6,6 +6,7 @@ import 'package:test_app/viewmodels/question_list_viewmodel.dart';
 
 class TestPage extends StatefulWidget {
   final QuestionListViewModel vmQuestionList;
+  final HtmlUnescape unescape = HtmlUnescape();
 
   TestPage({@required this.vmQuestionList});
 
@@ -15,7 +16,6 @@ class TestPage extends StatefulWidget {
 
 class _TestPageState extends State<TestPage> {
   List<int> radioIndexes = Iterable<int>.generate(4).toList();
-  HtmlUnescape unescape = HtmlUnescape();
   Question questionModel;
 
   Future<bool> _onWillPop() async {
@@ -48,7 +48,7 @@ class _TestPageState extends State<TestPage> {
                 child: Container(
                   margin: EdgeInsets.only(top: 30),
                   child: Text(
-                    unescape.convert(questionModel.question),
+                    widget.unescape.convert(questionModel.question),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 30,
@@ -76,7 +76,7 @@ class _TestPageState extends State<TestPage> {
                               );
                             },
                           ),
-                          Text(unescape.convert(questionModel.answers[index])),
+                          Text(widget.unescape.convert(questionModel.answers[index])),
                         ],
                       ),
                     )
