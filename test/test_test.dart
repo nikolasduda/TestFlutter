@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:test_app/constants.dart';
-import 'package:test_app/models/model_question.dart';
-import 'package:test_app/viewmodels/viewmodel_question_list.dart';
+import 'package:test_app/models/question.dart';
+import 'package:test_app/viewmodels/question_list_viewmodel.dart';
 
 void main() {
   String json =
@@ -13,9 +13,9 @@ void main() {
   group("ModelQuestion", () {
     List<Question> questions = [];
     var unescape = HtmlUnescape();
-    questions.add(Question.fromJson(jsonQuestions, unescape));
+    questions.add(Question.fromJson(jsonQuestions));
     test("factory should return right splitting into a structure", () async {
-      expect(questions[0].question,
+      expect(unescape.convert(questions[0].question),
           "The original mascot of the popular Nintendo game, \"Splatoon\" was going to be...");
       expect(questions[0].correctAnswer, "Mario");
       List<dynamic> answers = [];

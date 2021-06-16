@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:test_app/models/model_question.dart';
-import "package:html_unescape/html_unescape.dart";
+import 'package:test_app/models/question.dart';
 
 class WebService {
   var dio = Dio();
@@ -11,10 +10,9 @@ class WebService {
     final response = await dio.get(url);
 
     if (response.statusCode == 200) {
-      var unescape = HtmlUnescape();
       final result = response.data;
       Iterable list = result['results'];
-      return list.map((test) => Question.fromJson(test, unescape)).toList();
+      return list.map((test) => Question.fromJson(test)).toList();
     } else {
       throw Exception("Failed to get questions");
     }

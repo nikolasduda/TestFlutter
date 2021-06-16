@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:test_app/models/model_question.dart';
+import 'package:test_app/models/question.dart';
 import 'package:test_app/services/web_service.dart';
 import '../constants.dart';
 
@@ -28,13 +28,9 @@ class QuestionListViewModel {
     if (currentQuestionIndex == userAnswers.length) {
       return -1;
     }
-    for (int i = 0; i < questions[currentQuestionIndex].answers.length; i++) {
-      if (userAnswers[currentQuestionIndex] ==
-          questions[currentQuestionIndex].answers[i]) {
-        return i;
-      }
-    }
-    return -1;
+    return questions[currentQuestionIndex]
+        .answers
+        .indexWhere((answer) => answer == userAnswers[currentQuestionIndex]);
   }
 
   bool isQuestionIndexInRange() {
@@ -43,7 +39,7 @@ class QuestionListViewModel {
 
   void redirectToResultPage(BuildContext context) {
     Navigator.pushReplacementNamed(context, '/result_page',
-          arguments: getResult());
+        arguments: getResult());
   }
 
   void nextQuestion() {

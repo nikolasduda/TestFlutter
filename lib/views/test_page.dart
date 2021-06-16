@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:test_app/viewmodels/viewmodel_question_list.dart';
+import 'package:html_unescape/html_unescape.dart';
+import 'package:test_app/models/question.dart';
+import 'package:test_app/viewmodels/question_list_viewmodel.dart';
 
 class TestPage extends StatefulWidget {
   final QuestionListViewModel vmQuestionList;
@@ -13,6 +15,8 @@ class TestPage extends StatefulWidget {
 
 class _TestPageState extends State<TestPage> {
   List<int> radioIndexes = Iterable<int>.generate(4).toList();
+  HtmlUnescape unescape = HtmlUnescape();
+  Question questionModel;
 
   Future<bool> _onWillPop() async {
     if (widget.vmQuestionList.currentQuestionIndex > 0) {
@@ -29,6 +33,8 @@ class _TestPageState extends State<TestPage> {
 
   @override
   Widget build(BuildContext context) {
+    questionModel = widget
+        .vmQuestionList.questions[widget.vmQuestionList.currentQuestionIndex];
     return WillPopScope(
       child: Scaffold(
         appBar: AppBar(
@@ -42,10 +48,7 @@ class _TestPageState extends State<TestPage> {
                 child: Container(
                   margin: EdgeInsets.only(top: 30),
                   child: Text(
-                    widget
-                        .vmQuestionList
-                        .questions[widget.vmQuestionList.currentQuestionIndex]
-                        .question,
+                    unescape.convert(questionModel.question),
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 30,
@@ -63,7 +66,8 @@ class _TestPageState extends State<TestPage> {
                         children: [
                           Radio(
                             value: index,
-                            groupValue: widget.vmQuestionList.getSelectedRadio(),
+                            groupValue:
+                                widget.vmQuestionList.getSelectedRadio(),
                             onChanged: (val) {
                               setState(
                                 () {
@@ -72,11 +76,7 @@ class _TestPageState extends State<TestPage> {
                               );
                             },
                           ),
-                          Text(widget
-                              .vmQuestionList
-                              .questions[
-                                  widget.vmQuestionList.currentQuestionIndex]
-                              .answers[index]),
+                          Text(unescape.convert(questionModel.answers[index])),
                         ],
                       ),
                     )
