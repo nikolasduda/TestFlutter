@@ -1,73 +1,101 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility that Flutter provides. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-
+import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:test_app/main.dart';
+import 'package:test_app/Constants.dart';
+import 'package:test_app/models/model_test_structure.dart';
+import 'package:test_app/services/web_service.dart';
+import 'package:test_app/viewmodels/viewmodel_test_structure.dart';
+import 'package:test_app/viewmodels/viewmodel_test_structure_list.dart';
 
 void main() {
-  group("TestManager", () {
-    test("should return 'i'th question", () {
-      TestManager testManager = new TestManager();
-      Parser.question.add("hi");
-      Parser.question.add("boba");
-      Parser.question.add("i");
-      Parser.question.add("am");
-      Parser.question.add("biba");
-      var result = testManager.getQuestion(4);
-      expect(result, Parser.question[4]);
-    });
-
-    test("should return 'i'th correct answer", () {
-      TestManager testManager = new TestManager();
-      Parser.correctAnswer.add("hi");
-      Parser.correctAnswer.add("boba");
-      Parser.correctAnswer.add("i");
-      Parser.correctAnswer.add("am");
-      Parser.correctAnswer.add("biba");
-      var result = testManager.getRightAnswer(2);
-      expect(result, Parser.correctAnswer[2]);
-    });
-
-    test("should return 'i'th incorrect answers", () {
-      TestManager testManager = new TestManager();
-      Parser.correctAnswer.clear();
-      Parser.correctAnswer.add("hi");
-      Parser.correctAnswer.add("biba");
-      List<String> temp = ["i", "am", "oldman"];
-      List<String> temp2 = ["i", "am", "boba"];
-      Parser.incorrectAnswers.add(temp);
-      Parser.incorrectAnswers.add(temp2);
-      var result = testManager.getAnswers(1);
-      Set<String> expected = {"biba", "i", "am", "boba"};
-      expect(result, expected);
+  String json = '{"response_code":0,"results":[{"category":"Entertainment: Video Games","type":"multiple","difficulty":"medium","question":"The original mascot of the popular Nintendo game, &quot;Splatoon&quot; was going to be...","correct_answer":"Mario","incorrect_answers":["Inklings","Octolings","Zelda"]},{"category":"Entertainment: Video Games","type":"multiple","difficulty":"medium","question":"What happened to Half-Life 2 prior to its release, which resulted in Valve starting over the development of the game?","correct_answer":"The source code got leaked","incorrect_answers":["They weren&#039;t satisfied with the result","The story was not good enough","Way too many bugs to be fixed"]},{"category":"History","type":"multiple","difficulty":"medium","question":"What is the oldest US state?","correct_answer":"Delaware","incorrect_answers":["Rhode Island","Maine","Virginia"]},{"category":"Mythology","type":"multiple","difficulty":"hard","question":"Nidhogg is a mythical creature from what mythology?","correct_answer":"Norse","incorrect_answers":["Egyptian","Greek","Hindu"]},{"category":"Science & Nature","type":"multiple","difficulty":"medium","question":"About how old is Earth?","correct_answer":"4.5 Billion Years","incorrect_answers":["3.5 Billion Years","2.5 Billion Years","5.5 Billion Years"]},{"category":"Science & Nature","type":"multiple","difficulty":"hard","question":"What is &quot;Stenoma&quot;?","correct_answer":"A genus of moths","incorrect_answers":["A combat stimulant from WW2","A type of seasoning","A port city in the carribean"]},{"category":"General Knowledge","type":"multiple","difficulty":"medium","question":"Directly between the Washington Monument and the Reflecting Pool is a memorial to which war?","correct_answer":"World War II","incorrect_answers":["Vietnam War","American Civil War","American Revolutionary War"]},{"category":"History","type":"multiple","difficulty":"medium","question":"After his loss at the Battle of Waterloo, Napoleon Bonaparte was exiled to which island?","correct_answer":"St. Helena","incorrect_answers":["Elba","Corsica","Canary"]},{"category":"Entertainment: Film","type":"multiple","difficulty":"hard","question":"The film Mad Max: Fury Road features the Dies Irae  from which composer&#039;s requiem?","correct_answer":"Verdi","incorrect_answers":["Mozart","Berlioz","Brahms"]},{"category":"Entertainment: Film","type":"multiple","difficulty":"medium","question":"The killer in the 1981 film &#039;My Bloody Valentine&#039; wears what sort of outfit?","correct_answer":"Mining gear","incorrect_answers":["Clown costume","Santa suit","Police uniform"]}]}';
+  Map<String, dynamic> tests = jsonDecode(json);
+  Iterable list = tests['results'];
+  List<TestStructure> newTests = list.map((test) => TestStructure.fromJson(test)).toList();
+  group("ModelTestStructure", () {
+    test("factory should return right splitting into a structure", () async {
+      expect(newTests[0].question, "The original mascot of the popular Nintendo game, &quot;Splatoon&quot; was going to be...");
+      expect(newTests[0].correctAnswer, "Mario");
+      List<dynamic> answers = [];
+      answers.add("Inklings");
+      answers.add("Octolings");
+      answers.add("Zelda");
+      expect(newTests[0].incorrectAnswer, answers);
     });
   });
-  group("Parser", ()
-  {
-    test("should replace all &#039; and &quot;", () {
-      Parser parser = new Parser();
-      String quot = "&quot;&#039;aboba&#039;&quot;";
-      String result = parser.deleteSymbols(quot);
-      String expected = "\"'aboba'\"";
-      expect(result, expected);
+
+  group("WebService", () {
+    WebService webService = WebService();
+    test("should return list of tests with a length of 10", () async {
+      List<TestStructure> tests = await webService.getTests();
+      int length = 10;
+      expect(length, tests.length);
+    });
+  });
+
+  group("VMTestStructureList", () {
+    ViewModelTestStructureList viewModelTestStructureList = ViewModelTestStructureList();
+    group("getQuestion()", () {
+      test("should return question if answers are visible", () async {
+        await viewModelTestStructureList.getTest();
+        expect(viewModelTestStructureList.getQuestion(),
+            viewModelTestStructureList.tests[0].question);
+      });
+
+      test("getQuestion() should return result", () async {
+        await viewModelTestStructureList.getTest();
+        viewModelTestStructureList.visibility = false;
+        expect(
+            viewModelTestStructureList.getQuestion(), "Your result is 0 of 10");
+      });
     });
 
-    test("should make lists empty", () {
-      Parser parser = new Parser();
-      Parser.question.add("value");
-      Parser.correctAnswer.add("value");
-      var value = ["value", "value", "value"];
-      Parser.incorrectAnswers.add(value);
-      parser.clear();
-      expect(Parser.question.isEmpty, true);
-      expect(Parser.correctAnswer.isEmpty, true);
-      expect(Parser.incorrectAnswers.isEmpty, true);
+    group("increaseCounter()", () {
+      test("should increase counter", () async {
+        await viewModelTestStructureList.getTest();
+        viewModelTestStructureList.increaseCounter();
+        expect(1, viewModelTestStructureList.counter);
+      });
+
+      test("don't should increase counter", () async {
+        await viewModelTestStructureList.getTest();
+        viewModelTestStructureList.counter = 9;
+        viewModelTestStructureList.increaseCounter();
+        expect(9, viewModelTestStructureList.counter);
+      });
+    });
+
+    group("getButtonText()", () {
+      test("should return 'next' text", () async {
+        await viewModelTestStructureList.getTest();
+        expect(viewModelTestStructureList.getButtonText(), Constants.next);
+      });
+
+      test("should return 'find out the result' text", () async {
+        await viewModelTestStructureList.getTest();
+        viewModelTestStructureList.counter = 9;
+        expect(viewModelTestStructureList.getButtonText(), Constants.last);
+      });
+
+      test("should return 'ok' text", () async {
+        await viewModelTestStructureList.getTest();
+        viewModelTestStructureList.counter = 9;
+        viewModelTestStructureList.visibility = false;
+        expect(viewModelTestStructureList.getButtonText(), Constants.ok);
+      });
+    });
+
+    group("shuffleAnswers()", () {
+      test("should shuffle list", () async {
+        viewModelTestStructureList.tests = newTests.map((test) => ViewModelTestStructure(testStructure: test)).toList();
+        var test = viewModelTestStructureList.tests[0];
+        viewModelTestStructureList.shuffleAnswers(test);
+        var test2 = [];
+        test2.add(test.correctAnswer);
+        for(int i = 0; i < test.incorrectAnswer.length; i++) {
+          test2.add(test.incorrectAnswer[i]);
+        }
+        expect(test.answers, isNot(test2));
+      });
     });
   });
 }
